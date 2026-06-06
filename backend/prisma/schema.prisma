@@ -1,0 +1,137 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Restaurant {
+  id          String          @id @default(cuid())
+  name        String
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  users       User[]
+  suppliers   Supplier[]
+  inventory   InventoryItem[]
+  expenses    Expense[]
+  tasks       Task[]
+}
+
+model User {
+  id            String      @id @default(cuid())
+  name          String
+  email         String      @unique
+  passwordHash  String 
+  role          Role        @default(STAFF)
+  restaurantId  String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  restaurant    Restaurant  @relation(fields: [restaurantId], references: [id])
+  tasks         Task[]
+}
+
+model Supplier {
+  id              String          @id @default(cuid())
+  name            String
+  phone           String?
+  restaurantId    String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  restaurant      Restaurant      @relation(fields: [restaurantId], references: [id])
+  inventoryItems  InventoryItem[]
+  expenses        Expense[]
+}
+
+model InventoryItem {
+  id                  String                  @id @default(cuid())
+  name                String
+  category            String
+  unit                String
+  currentStock        Float                   @default(0)
+  reorderLevel        Float                   @default(0)
+  isPerishable        Boolean                 @default(false)
+  expirationDate      DateTime?
+  averageCostPerUnit  Float                   @default(0)
+  supplierId          String?
+  restaurantId        String
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+
+  restaurant          Restaurant              @relation(fields: [restaurantId], references: [id])
+  supplier            Supplier?               @relation(fields: [supplierId], references: [id])
+  transactions        InventoryTransaction[]
+}
+
+model InventoryTransaction {
+  id                  String          @id @default(cuid())
+  inventoryItemId     String
+  type                TransactionType
+  quantity            Float
+  notes               String?
+  updatedAt           DateTime        @updatedAt
+
+  inventoryItem       InventoryItem   @relation(fields: [inventoryItemId], references: [id])
+}
+
+model Expense {
+  id              String      @id @default(cuid())
+  amount          Float
+  category        String
+  description     String
+  expenseDate     DateTime
+  receiptImageUrl String?
+  supplierId      String?
+  restaurantId    String
+  createdAt       DateTime    @default(now())
+
+  restaurant      Restaurant  @relation(fields: [restaurantId], references: [id])
+  supplier        Supplier?   @relation(fields: [supplierId], references: [id])
+}
+
+model Task {
+  id                String      @id @default(cuid())
+  title             String
+  description       String?
+  category          String
+  priority          Priority    @default(MEDIUM)
+  status            TaskStatus  @default(PENDING)
+  dueDateTime       DateTime
+  assignedToUserId  String
+  restaurantId      String
+  createdAt         DateTime    @default(now())
+  completedAt       DateTime
+
+  restaurant        Restaurant  @relation(fields: [restaurantId], references: [id])
+  assignedTo        User        @relation(fields: [assignedToUserId], references: [id])
+}
+
+enum Role {
+  MANAGER
+  STAFF
+}
+
+enum TransactionType {
+  IN
+  OUT
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum TaskStatus {
+  PENDING
+  COMPLETED
+}
