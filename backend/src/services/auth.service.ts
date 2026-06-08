@@ -3,7 +3,7 @@ import { Role } from "../generated/prisma/enums.ts";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../utils/jwt.ts";
 
-interface ServiceResponse<T> {
+export interface ServiceResponse<T> {
     success: boolean;
     message: string;
     data?: T;
