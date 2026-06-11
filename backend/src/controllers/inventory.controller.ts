@@ -1,17 +1,29 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import * as itemService from "../services/inventory.service.ts";
 import type { AuthRequest } from "../middleware/auth.middleware.ts"
 
-// Create item controller
+//=======
+// Helper
+//=======
+const getRestaurantId = (req: AuthRequest, res: Response): string | null => {
+    const restaurantId = req.user?.restaurantId;
+    if (!restaurantId) {
+        res.status(401).json({
+            success: false,
+            message: "Unauthorized: Restaurant context missing.",
+        });
+        return null;
+    }
+    return restaurantId as string;
+}
+
+// ===========
+// Create item
+// ===========
 export const createItem = async (req:AuthRequest, res:Response) => {
     try {
-        const restaurantId = req.user?.restaurantId as string;
-        if (!restaurantId) {
-            return res.status(401).json({
-                success: false,
-                message: "Unauthorized: Restaurant context missing."
-            });
-        }
+        const restaurantId = getRestaurantId(req, res);
+        if (!restaurantId) return;
 
         const result = await itemService.createItem(req.body, restaurantId);
 
@@ -31,16 +43,13 @@ export const createItem = async (req:AuthRequest, res:Response) => {
     }
 }
 
-// Get items controller
+// =========
+// Get items
+// =========
 export const getItems = async (req:AuthRequest, res:Response) => {
     try {
-        const restaurantId = req.user?.restaurantId as string;
-        if (!restaurantId) {
-            return res.status(401).json({
-                success: false,
-                message: "Unauthorized: Restaurant context missing."
-            });
-        }
+        const restaurantId = getRestaurantId(req, res);
+        if (!restaurantId) return;
 
         const result = await itemService.getItems(restaurantId);
 
@@ -60,18 +69,15 @@ export const getItems = async (req:AuthRequest, res:Response) => {
     }
 }
 
-// Get item by id controller
+// ==============
+// Get item by Id
+// ==============
 export const getItemById = async (req:AuthRequest, res:Response) => {
     try {
         const id = req.params.itemId as string;
 
-        const restaurantId = req.user?.restaurantId as string;
-        if (!restaurantId) {
-            return res.status(401).json({
-                success: false,
-                message: "Unauthorized: Restaurant context missing."
-            });
-        }
+        const restaurantId = getRestaurantId(req, res);
+        if (!restaurantId) return;
 
         const result = await itemService.getItemById(id, restaurantId);
 
@@ -91,17 +97,15 @@ export const getItemById = async (req:AuthRequest, res:Response) => {
     }
 }
 
-// Update item controller
+// ===========
+// Update item
+// ===========
 export const updateItem = async (req:AuthRequest, res:Response) => {
     try {
         const id = req.params.itemId as string;
-        const restaurantId = req.user?.restaurantId as string;
-        if (!restaurantId) {
-            return res.status(401).json({
-                success: false,
-                message: "Unauthorized: Restaurant context missing from session."
-            });
-        }
+        
+        const restaurantId = getRestaurantId(req, res);
+        if (!restaurantId) return;
 
         const result = await itemService.updateItem(id, restaurantId, req.body);
 
@@ -129,17 +133,15 @@ export const updateItem = async (req:AuthRequest, res:Response) => {
     }
 }
 
-// Delete item controller
+// ===========
+// Delete item
+// ===========
 export const deleteItem = async (req: AuthRequest, res: Response) => {
     try {
         const id = req.params.itemId as string;
-        const restaurantId = req.user?.restaurantId as string;
-        if (!restaurantId) {
-            return res.status(401).json({
-                success: false,
-                message: "Unauthorized: Restaurant context missing from session."
-            });
-        }
+        
+        const restaurantId = getRestaurantId(req, res);
+        if (!restaurantId) return;
 
         const result = await itemService.deleteItem(id, restaurantId);
         if (!result.success) {
