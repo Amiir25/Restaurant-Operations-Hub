@@ -1,4 +1,5 @@
-import type { InventoryItem } from "@prisma/client";
+
+import type { InventoryItem } from "../generated/prisma/client.ts";
 import { prisma } from "../lib/prisma.ts";
 import type { ServiceResponse } from "./auth.service.ts";
 
@@ -84,7 +85,7 @@ export const createItem = async (
         }
 
     } catch (error) {
-        console.error("🔴 Create inventory item error:", error);
+        console.error("🚨 Create inventory item error:", error);
 
         return {
             success: false,
@@ -122,7 +123,7 @@ export const getItems = async (
         };
 
     } catch (error) {
-        console.error("🔴 Get inventory items error:", error);
+        console.error("🚨 Get inventory items error:", error);
 
         return {
             success: false,
@@ -167,7 +168,7 @@ export const getItemById = async (
         }
 
     } catch (error) {
-        console.error("🔴 Get inventory item error:", error);
+        console.error("🚨 Get inventory item error:", error);
 
         return {
             success: false,
@@ -218,11 +219,11 @@ export const updateItem = async (
         if (error.code === "P2025") {
             return {
                 success: false,
-                message: "🔴 Item with this Id not found in the specified restaurant.",
+                message: "🚨 Item with this Id not found in the specified restaurant.",
             }
         }
 
-        console.error("🔴 Update inventory item error:", error);
+        console.error("🚨 Update inventory item error:", error);
 
         return {
             success: false,
@@ -262,11 +263,11 @@ export const deleteItem = async (
         if (error.code === "P2025") {
             return {
                 success: false,
-                message: "🔴 Item with this id not found in the specified restaurant.",
+                message: "🚨 Item with this id not found in the specified restaurant.",
             }
         }
 
-        console.error("🔴 Delete inventory item error:", error);
+        console.error("🚨 Delete inventory item error:", error);
 
         return {
             success: false,
