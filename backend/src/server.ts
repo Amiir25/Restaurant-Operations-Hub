@@ -26,9 +26,11 @@ app.get('/api/health', (req, res) => {
 // Routes
 import authRoutes from "./routes/auth.routes.ts";
 import inventoryRoutes from "./routes/inventory.routes.ts";
+import transactionRoutes from "./routes/transaction.routes.ts";
 
 app.use('/api/auth', authRoutes);
 app.use('/api/inventory', inventoryRoutes);
+app.use('/api/transactions', transactionRoutes);
 
 // Server
 app.listen(PORT, () => {
