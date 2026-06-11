@@ -8,38 +8,38 @@ const router = Router();
 router.use(authMiddleware);
 
 /**
- * @route   POST inventory/create-item
+ * @route   POST /api/inventory
  * @desc    Create a new inventory item
  * @access  Protected
  */
-router.post('/create-item', inventoryController.createItem);
+router.post('/', inventoryController.createItem);
 
 /**
- * @route   GET inventory/get-all-items
+ * @route   GET /api/inventory
  * @desc    Retrieve all items in a restaurant
  * @access  Protected
  */
-router.get('/get-all-items', inventoryController.getItems);
+router.get('/', inventoryController.getItems);
 
 /**
- * @route   GET inventory/get-item
- * @desc    Retrieve item by id in a restaurant
+ * @route   GET /api/inventory/:itemId
+ * @desc    Retrieve specific item by id
  * @access  Protected
  */
-router.get('/get-item/:itemId', inventoryController.getItemById);
+router.get('/:itemId', inventoryController.getItemById);
 
 /**
- * @route   PUT inventory/update-item
- * @desc    Update item
+ * @route   PUT /api/inventory/:itemId
+ * @desc    Update specific item
  * @access  Protected
  */
-router.put('/update-item/:itemId', inventoryController.updateItem);
+router.put('/:itemId', inventoryController.updateItem);
 
 /**
- * @route   DELETE inventory/delete-item
- * @desc    Delete item
+ * @route   DELETE /ao/inventory/:itemId
+ * @desc    Delete a specific item
  * @access  Protected
  */
-router.delete('/delete-item/:itemId', inventoryController.deleteItem);
+router.delete('/:itemId', inventoryController.deleteItem);
 
 export default router
